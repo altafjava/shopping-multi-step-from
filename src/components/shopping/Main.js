@@ -1,16 +1,23 @@
 import { Button, makeStyles, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import { Form, Formik } from 'formik';
 import React, { Fragment } from 'react';
+import AddressForm from './AddressForm';
 
 const styles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
   backButton: {
     marginRight: theme.spacing(1),
   },
   instructions: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: '3rem',
+  },
+  stepper: {
+    padding: theme.spacing(3, 0, 5),
   },
 }));
 
@@ -21,7 +28,7 @@ function getSteps() {
 function getStepContent(stepIndex) {
   switch (stepIndex) {
     case 0:
-      return 'Select campaign settings...';
+      return <AddressForm />;
     case 1:
       return 'What is an ad group anyways?';
     case 2:
@@ -52,34 +59,52 @@ const Main = () => {
       <Typography variant='h4' component='h1' align='center'>
         Checkout
       </Typography>
-      <div className={classes.root}>
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <div>
-          {activeStep === steps.length ? (
+      <Stepper activeStep={activeStep} className={classes.stepper}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <div>
+        {activeStep === steps.length ? (
+          <div>
+            <Typography className={classes.instructions}>All steps completed</Typography>
+            <Button onClick={handleReset}>Reset</Button>
+          </div>
+        ) : (
+          <div>
             <div>
-              <Typography className={classes.instructions}>All steps completed</Typography>
-              <Button onClick={handleReset}>Reset</Button>
+              <Formik
+                initialValues={{
+                  firstName: '',
+                  lastName: '',
+                  addressLine1: '',
+                  addressLine2: '',
+                  city: '',
+                  state: '',
+                  zipcode: '',
+                  country: '',
+                }}
+              >
+                {({ errors }) => (
+                  <Form id='form'>
+                    {console.log('errors', errors)}
+                    {getStepContent(activeStep)}
+                    <div className={classes.buttons}>
+                      <Button disabled={activeStep === 0} onClick={handleBack} className={classes.backButton}>
+                        Back
+                      </Button>
+                      <Button variant='contained' color='primary' onClick={handleNext}>
+                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
             </div>
-          ) : (
-            <div>
-              <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
-              <div>
-                <Button disabled={activeStep === 0} onClick={handleBack} className={classes.backButton}>
-                  Back
-                </Button>
-                <Button variant='contained' color='primary' onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Fragment>
   );
