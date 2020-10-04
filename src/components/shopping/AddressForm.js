@@ -1,19 +1,35 @@
 import { FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
+import { COUNTRIES_JSON_DATA as countries } from '../../resources/Countries';
 
 const AddressForm = () => {
-  const [country, setCountry] = React.useState('');
-  const [state, setState] = React.useState('');
-  const [city, setCity] = React.useState('');
+  const [states, setStates] = React.useState([]);
+  const [cities, setCities] = React.useState([]);
+  const [selectedCountry, setSelectedCountry] = React.useState('');
+  const [selectedState, setSelectedState] = React.useState('');
+  const [selectedCity, setSelectedCity] = React.useState('');
 
+  useEffect(() => {
+    changeCountry('India');
+  }, []);
+  function changeCountry(countryName) {
+    setSelectedState('');
+    setSelectedCity('');
+    setSelectedCountry(countryName);
+    setStates(countries.find((country) => country.CountryName === countryName).States);
+  }
   const handleCountryChange = (event) => {
-    setCountry(event.target.value);
+    changeCountry(event.target.value);
   };
   const handleStateChange = (event) => {
-    setState(event.target.value);
+    setSelectedCity('');
+    const stateName = event.target.value;
+    setSelectedState(stateName);
+    setCities(states.find((state) => state.StateName === stateName).Cities);
   };
   const handleCityChange = (event) => {
-    setCity(event.target.value);
+    const cityName = event.target.value;
+    setSelectedCity(cityName);
   };
 
   return (
@@ -81,39 +97,51 @@ const AddressForm = () => {
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel>Country*</InputLabel>
-            <Select value={country} onChange={handleCountryChange}>
+            <Select value={selectedCountry} onChange={handleCountryChange}>
               <MenuItem value=''>
                 <em>None</em>
               </MenuItem>
-              <MenuItem value='Delhi'>Delhi</MenuItem>
-              <MenuItem value='Uttar Pradesh'>Uttar Pradesh</MenuItem>
-              <MenuItem value='Jharkahand'>Jharkhand</MenuItem>
+              {countries.map((country, key) => {
+                return (
+                  <MenuItem key={key} value={country.CountryName}>
+                    {country.CountryName}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel>State*</InputLabel>
-            <Select value={state} onChange={handleStateChange}>
+            <Select value={selectedState} onChange={handleStateChange}>
               <MenuItem value=''>
                 <em>None</em>
               </MenuItem>
-              <MenuItem value='Delhi'>Delhi</MenuItem>
-              <MenuItem value='Uttar Pradesh'>Uttar Pradesh</MenuItem>
-              <MenuItem value='Jharkahand'>Jharkhand</MenuItem>
+              {states.map((state, key) => {
+                return (
+                  <MenuItem key={key} value={state.StateName}>
+                    {state.StateName}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel>City*</InputLabel>
-            <Select value={city} onChange={handleCityChange}>
+            <InputLabel>City</InputLabel>
+            <Select value={selectedCity} onChange={handleCityChange}>
               <MenuItem value=''>
                 <em>None</em>
               </MenuItem>
-              <MenuItem value='Delhi'>Delhi</MenuItem>
-              <MenuItem value='Uttar Pradesh'>Uttar Pradesh</MenuItem>
-              <MenuItem value='Jharkahand'>Jharkhand</MenuItem>
+              {cities.map((city, key) => {
+                return (
+                  <MenuItem key={key} value={city}>
+                    {city}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
         </Grid>
