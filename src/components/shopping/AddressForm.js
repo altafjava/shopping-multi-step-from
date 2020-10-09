@@ -1,8 +1,9 @@
-import { FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import React, { Fragment, useEffect } from 'react';
 import { COUNTRIES_JSON_DATA as countries } from '../../resources/Countries';
 
-const AddressForm = () => {
+const AddressForm = (props) => {
+  const { errors, touched, values, handleChange, handleBlur } = props;
   const [states, setStates] = React.useState([]);
   const [cities, setCities] = React.useState([]);
   const [selectedCountry, setSelectedCountry] = React.useState('');
@@ -12,6 +13,7 @@ const AddressForm = () => {
   useEffect(() => {
     changeCountry('India');
   }, []);
+
   function changeCountry(countryName) {
     setSelectedState('');
     setSelectedCity('');
@@ -44,11 +46,11 @@ const AddressForm = () => {
             name='firstName'
             label='First Name*'
             fullWidth
-            // value={values.firstName}
-            // onChange={handleChange}
-            // onBlur={handleBlur}
-            // helperText={errors.firstName && touched.firstName && errors.firstName}
-            // error={errors.firstName && touched.firstName}
+            value={values.firstName}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={touched.firstName && errors.firstName}
+            error={errors.firstName && touched.firstName}
             // className={classes.textfieldWidth}
           />
         </Grid>
@@ -56,11 +58,11 @@ const AddressForm = () => {
           <TextField
             id='lastName'
             name='lastName'
-            label='Last Name*'
+            label='Last Name'
             fullWidth
-            // value={values.firstName}
-            // onChange={handleChange}
-            // onBlur={handleBlur}
+            value={values.lastName}
+            onChange={handleChange}
+            onBlur={handleBlur}
             // helperText={errors.firstName && touched.firstName && errors.firstName}
             // error={errors.firstName && touched.firstName}
             // className={classes.textfieldWidth}
@@ -72,11 +74,11 @@ const AddressForm = () => {
             name='addressLine1'
             label='Address Line 1*'
             fullWidth
-            // value={values.firstName}
-            // onChange={handleChange}
-            // onBlur={handleBlur}
-            // helperText={errors.firstName && touched.firstName && errors.firstName}
-            // error={errors.firstName && touched.firstName}
+            value={values.addressLine1}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={touched.addressLine1 && errors.addressLine1}
+            error={errors.addressLine1 && touched.addressLine1}
             // className={classes.textfieldWidth}
           />
         </Grid>
@@ -86,9 +88,9 @@ const AddressForm = () => {
             name='addressLine2'
             label='Address Line 2'
             fullWidth
-            // value={values.firstName}
-            // onChange={handleChange}
-            // onBlur={handleBlur}
+            value={values.addressLine2}
+            onChange={handleChange}
+            onBlur={handleBlur}
             // helperText={errors.firstName && touched.firstName && errors.firstName}
             // error={errors.firstName && touched.firstName}
             // className={classes.textfieldWidth}
@@ -97,10 +99,7 @@ const AddressForm = () => {
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel>Country*</InputLabel>
-            <Select value={selectedCountry} onChange={handleCountryChange}>
-              <MenuItem value=''>
-                <em>None</em>
-              </MenuItem>
+            <Select value={selectedCountry} onChange={handleCountryChange} name='country' id='country'>
               {countries.map((country, key) => {
                 return (
                   <MenuItem key={key} value={country.CountryName}>
@@ -112,12 +111,18 @@ const AddressForm = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+          <FormControl fullWidth error={errors.state && touched.state}>
             <InputLabel>State*</InputLabel>
-            <Select value={selectedState} onChange={handleStateChange}>
-              <MenuItem value=''>
-                <em>None</em>
-              </MenuItem>
+            <Select
+              value={selectedState}
+              onChange={(e) => {
+                handleChange(e);
+                handleStateChange(e);
+              }}
+              onBlur={handleBlur}
+              name='state'
+              id='state'
+            >
               {states.map((state, key) => {
                 return (
                   <MenuItem key={key} value={state.StateName}>
@@ -126,6 +131,7 @@ const AddressForm = () => {
                 );
               })}
             </Select>
+            <FormHelperText>{touched.state && errors.state}</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -149,30 +155,26 @@ const AddressForm = () => {
           <TextField
             id='pincode'
             name='pincode'
-            type='number'
             label='Pincode*'
             fullWidth
-            // value={values.firstName}
-            // onChange={handleChange}
-            // onBlur={handleBlur}
-            // helperText={errors.firstName && touched.firstName && errors.firstName}
-            // error={errors.firstName && touched.firstName}
-            // className={classes.textfieldWidth}
+            value={values.pincode}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={touched.pincode && errors.pincode}
+            error={errors.pincode && touched.pincode}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             id='mobile'
             name='mobile'
-            type='number'
             label='Mobile*'
             fullWidth
-            // value={values.firstName}
-            // onChange={handleChange}
-            // onBlur={handleBlur}
-            // helperText={errors.firstName && touched.firstName && errors.firstName}
-            // error={errors.firstName && touched.firstName}
-            // className={classes.textfieldWidth}
+            value={values.mobile}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={touched.mobile && errors.mobile}
+            error={errors.mobile && touched.mobile}
           />
         </Grid>
       </Grid>
